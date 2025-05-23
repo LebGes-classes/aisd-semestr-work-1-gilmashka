@@ -5,98 +5,98 @@
 
 class SegmentTree {
 private:
-    struct Node { //структура, с хранением данных
-        int sum; //сумма на отрезке
-        int min; //минимум на отрезке
-        int max; // максимум на отрезке
+    struct Node { //Г±ГІГ°ГіГЄГІГіГ°Г , Г± ГµГ°Г Г­ГҐГ­ГЁГҐГ¬ Г¤Г Г­Г­Г»Гµ
+        int sum; //Г±ГіГ¬Г¬Г  Г­Г  Г®ГІГ°ГҐГ§ГЄГҐ
+        int min; //Г¬ГЁГ­ГЁГ¬ГіГ¬ Г­Г  Г®ГІГ°ГҐГ§ГЄГҐ
+        int max; // Г¬Г ГЄГ±ГЁГ¬ГіГ¬ Г­Г  Г®ГІГ°ГҐГ§ГЄГҐ
 
         Node(int val = 0) : sum(val), min(val), max(val) {}
     };
 
-    int n;                      // к-во элементов в массиве
-    std::vector<int> data;       // копирует входящие данные
-    std::vector<Node> tree;      // массив узлов => дерево
-    int tree_size;               // раззмер дерева (2*N) - ближайшая степень 2 >= n
+    int n;                      // ГЄ-ГўГ® ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Гў Г¬Г Г±Г±ГЁГўГҐ
+    std::vector<int> data;       // ГЄГ®ГЇГЁГ°ГіГҐГІ ГўГµГ®Г¤ГїГ№ГЁГҐ Г¤Г Г­Г­Г»ГҐ
+    std::vector<Node> tree;      // Г¬Г Г±Г±ГЁГў ГіГ§Г«Г®Гў => Г¤ГҐГ°ГҐГўГ®
+    int tree_size;               // Г°Г Г§Г§Г¬ГҐГ° Г¤ГҐГ°ГҐГўГ  (2*N) - ГЎГ«ГЁГ¦Г Г©ГёГ Гї Г±ГІГҐГЇГҐГ­Гј 2 >= n
 
-    // внутренняя операция по объединению 2х отрезков в один
+    // ГўГ­ГіГІГ°ГҐГ­Г­ГїГї Г®ГЇГҐГ°Г Г¶ГЁГї ГЇГ® Г®ГЎГєГҐГ¤ГЁГ­ГҐГ­ГЁГѕ 2Гµ Г®ГІГ°ГҐГ§ГЄГ®Гў Гў Г®Г¤ГЁГ­
     Node combine(const Node& a, const Node& b) {
         Node res;
-        res.sum = a.sum + b.sum; // сумма отрезка - сумма левого + сумма правого
-        res.min = std::min(a.min, b.min); // минимум нового отрезка - минимум минимума детей
-        res.max = std::max(a.max, b.max); // аналогично для максимума
+        res.sum = a.sum + b.sum; // Г±ГіГ¬Г¬Г  Г®ГІГ°ГҐГ§ГЄГ  - Г±ГіГ¬Г¬Г  Г«ГҐГўГ®ГЈГ® + Г±ГіГ¬Г¬Г  ГЇГ°Г ГўГ®ГЈГ®
+        res.min = std::min(a.min, b.min); // Г¬ГЁГ­ГЁГ¬ГіГ¬ Г­Г®ГўГ®ГЈГ® Г®ГІГ°ГҐГ§ГЄГ  - Г¬ГЁГ­ГЁГ¬ГіГ¬ Г¬ГЁГ­ГЁГ¬ГіГ¬Г  Г¤ГҐГІГҐГ©
+        res.max = std::max(a.max, b.max); // Г Г­Г Г«Г®ГЈГЁГ·Г­Г® Г¤Г«Гї Г¬Г ГЄГ±ГЁГ¬ГіГ¬Г 
         return res;
     }
 
 public:
-    // Конструктор дерева отрезков
+    // ГЉГ®Г­Г±ГІГ°ГіГЄГІГ®Г° Г¤ГҐГ°ГҐГўГ  Г®ГІГ°ГҐГ§ГЄГ®Гў
     SegmentTree(const std::vector<int>& nums) {
         n = nums.size();
         data = nums;
 
-        // вычисление размера дерево по формуле
+        // ГўГ»Г·ГЁГ±Г«ГҐГ­ГЁГҐ Г°Г Г§Г¬ГҐГ°Г  Г¤ГҐГ°ГҐГўГ® ГЇГ® ГґГ®Г°Г¬ГіГ«ГҐ
         tree_size = 1;
         while (tree_size < n) {
             tree_size <<= 1;
         }
         tree.resize(2 * tree_size - 1);
 
-        // построение дерева
+        // ГЇГ®Г±ГІГ°Г®ГҐГ­ГЁГҐ Г¤ГҐГ°ГҐГўГ 
         build(0, 0, n - 1);
     }
 
 private:
-    // построение через рекурсию
+    // ГЇГ®Г±ГІГ°Г®ГҐГ­ГЁГҐ Г·ГҐГ°ГҐГ§ Г°ГҐГЄГіГ°Г±ГЁГѕ
     void build(int node, int left, int right) {
         if (left == right) {
-            // структора такова, что лист дерева - отдельный его элемент
+            // Г±ГІГ°ГіГЄГІГ®Г°Г  ГІГ ГЄГ®ГўГ , Г·ГІГ® Г«ГЁГ±ГІ Г¤ГҐГ°ГҐГўГ  - Г®ГІГ¤ГҐГ«ГјГ­Г»Г© ГҐГЈГ® ГЅГ«ГҐГ¬ГҐГ­ГІ
             if (left < n) {
                 tree[node] = Node(data[left]);
             }
             else {
-                // если лист - реальный элемент => сохранить, иначе => заполнить 0
+                // ГҐГ±Г«ГЁ Г«ГЁГ±ГІ - Г°ГҐГ Г«ГјГ­Г»Г© ГЅГ«ГҐГ¬ГҐГ­ГІ => Г±Г®ГµГ°Г Г­ГЁГІГј, ГЁГ­Г Г·ГҐ => Г§Г ГЇГ®Г«Г­ГЁГІГј 0
                 tree[node] = Node(0);
             }
             return;
         }
-        // рекурсивное построение поддерревьев
+        // Г°ГҐГЄГіГ°Г±ГЁГўГ­Г®ГҐ ГЇГ®Г±ГІГ°Г®ГҐГ­ГЁГҐ ГЇГ®Г¤Г¤ГҐГ°Г°ГҐГўГјГҐГў
         int mid = left + (right - left) / 2;
-        build(2 * node + 1, left, mid);      // левый
-        build(2 * node + 2, mid + 1, right); // правный 
+        build(2 * node + 1, left, mid);      // Г«ГҐГўГ»Г©
+        build(2 * node + 2, mid + 1, right); // ГЇГ°Г ГўГ­Г»Г© 
 
-        // узел - combine от детей 
+        // ГіГ§ГҐГ« - combine Г®ГІ Г¤ГҐГІГҐГ© 
         tree[node] = combine(tree[2 * node + 1], tree[2 * node + 2]);
     }
 
 public:
-    // МЕТОД: сумма на отрезке [l, r]
+    // ГЊГ…Г’ГЋГ„: Г±ГіГ¬Г¬Г  Г­Г  Г®ГІГ°ГҐГ§ГЄГҐ [l, r]
     int querySum(int l, int r) {
         return query(0, 0, n - 1, l, r).sum;
     }
 
-    // МЕТОД: минимум на отрезке [l, r]
+    // ГЊГ…Г’ГЋГ„: Г¬ГЁГ­ГЁГ¬ГіГ¬ Г­Г  Г®ГІГ°ГҐГ§ГЄГҐ [l, r]
     int queryMin(int l, int r) {
         return query(0, 0, n - 1, l, r).min;
     }
 
-    // МЕТОД: максимум на отрезке [l, r]
+    // ГЊГ…Г’ГЋГ„: Г¬Г ГЄГ±ГЁГ¬ГіГ¬ Г­Г  Г®ГІГ°ГҐГ§ГЄГҐ [l, r]
     int queryMax(int l, int r) {
         return query(0, 0, n - 1, l, r).max;
     }
 
 private:
-    // ВСПОМОГАТЕЛЬНЫЙ МЕТОД: запрос
+    // Г‚Г‘ГЏГЋГЊГЋГѓГЂГ’Г…Г‹ГњГЌГ›Г‰ ГЊГ…Г’ГЋГ„: Г§Г ГЇГ°Г®Г±
     Node query(int node, int node_left, int node_right, int query_left, int query_right) {
-        // отрезок вообще вне запроса => 0
+        // Г®ГІГ°ГҐГ§Г®ГЄ ГўГ®Г®ГЎГ№ГҐ ГўГ­ГҐ Г§Г ГЇГ°Г®Г±Г  => 0
         if (node_right < query_left || node_left > query_right) {
             return Node(0); 
         }
 
-        // отрезок текущего узла полностью содержится в запрашиваемом
+        // Г®ГІГ°ГҐГ§Г®ГЄ ГІГҐГЄГіГ№ГҐГЈГ® ГіГ§Г«Г  ГЇГ®Г«Г­Г®Г±ГІГјГѕ Г±Г®Г¤ГҐГ°Г¦ГЁГІГ±Гї Гў Г§Г ГЇГ°Г ГёГЁГўГ ГҐГ¬Г®Г¬
         if (query_left <= node_left && node_right <= query_right) {
             return tree[node];
         }
 
-        // содержится только частично => рекурсивно проверить оба поддерева
+        // Г±Г®Г¤ГҐГ°Г¦ГЁГІГ±Гї ГІГ®Г«ГјГЄГ® Г·Г Г±ГІГЁГ·Г­Г® => Г°ГҐГЄГіГ°Г±ГЁГўГ­Г® ГЇГ°Г®ГўГҐГ°ГЁГІГј Г®ГЎГ  ГЇГ®Г¤Г¤ГҐГ°ГҐГўГ 
         int mid = node_left + (node_right - node_left) / 2;
         Node left_res = query(2 * node + 1, node_left, mid, query_left, query_right);
         Node right_res = query(2 * node + 2, mid + 1, node_right, query_left, query_right);
@@ -105,16 +105,16 @@ private:
     }
 
 public:
-    // МЕТОД: обновление конкретного элемента по индексу
+    // ГЊГ…Г’ГЋГ„: Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ ГЄГ®Г­ГЄГ°ГҐГІГ­Г®ГЈГ® ГЅГ«ГҐГ¬ГҐГ­ГІГ  ГЇГ® ГЁГ­Г¤ГҐГЄГ±Гі
     void update(int index, int value) {
-        if (index < 0 || index >= n) return; // проверка на правильность введенного индекса
+        if (index < 0 || index >= n) return; // ГЇГ°Г®ГўГҐГ°ГЄГ  Г­Г  ГЇГ°Г ГўГЁГ«ГјГ­Г®Г±ГІГј ГўГўГҐГ¤ГҐГ­Г­Г®ГЈГ® ГЁГ­Г¤ГҐГЄГ±Г 
 
         data[index] = value;
         update(0, 0, n - 1, index, value);
     }
 
 private:
-    // внутренняя логика метода
+    // ГўГ­ГіГІГ°ГҐГ­Г­ГїГї Г«Г®ГЈГЁГЄГ  Г¬ГҐГІГ®Г¤Г 
     void update(int node, int node_left, int node_right, int index, int value) {
         if (node_left == node_right) {
             tree[node] = Node(value);
@@ -133,7 +133,7 @@ private:
     }
 
 public:
-    // МЕТОД: вывод дерева
+    // ГЊГ…Г’ГЋГ„: ГўГ»ГўГ®Г¤ Г¤ГҐГ°ГҐГўГ 
     void printTree() {
         std::cout << "Segment Tree Structure:\n";
         std::cout << "Index\tRange\tSum\tMin\tMax\n";
@@ -144,7 +144,7 @@ private:
     void printTree(int node, int left, int right, int level) {
         if (node >= tree.size()) return;
 
-        // вывод текущего узла
+        // ГўГ»ГўГ®Г¤ ГІГҐГЄГіГ№ГҐГЈГ® ГіГ§Г«Г 
         std::cout << node << "\t[" << left << "," << right << "]\t"
             << tree[node].sum << "\t"
             << tree[node].min << "\t"
